@@ -87,7 +87,7 @@ int main() {
         }
 
         if (couple[1]) {
-            if (couple[0] == couple[1]) {
+            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y)) {
                 BOARD[start.y][start.x] = 0;
                 BOARD[end.y][end.x] = 0;
             }
