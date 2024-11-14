@@ -2,6 +2,10 @@
 #include <string>
 #include <random>
 #include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
 
 const int ROW = 6;
 const int COLUMN = 12;
@@ -9,6 +13,9 @@ const int NUMBER_OF_POKEMON = 18;
 const int NUMBER_OF_EACH_POKEMON = 4;
 const int EMPTY = 0;
 const int SQUARE_SIZE = 60.f;
+const int delayTimeLine = 50;
+const int dx[] = {-1, 0, 1, 0}; 
+const int dy[] = {0, -1, 0, 1};
 const std::string POKEMONS[NUMBER_OF_POKEMON+1] = {
     "",
     "./src/image/pokemons/1.png",
@@ -31,10 +38,17 @@ const std::string POKEMONS[NUMBER_OF_POKEMON+1] = {
     "./src/image/pokemons/448.png"
 };
 
-int BOARD[ROW+2][COLUMN+2];
+int BOARD[ROW+2][COLUMN+2] = {};
+int visited[ROW+2][COLUMN+2] = {};
 int couple[2] = {0, 0};
 int startFlat = 1;
 int endFlat = 0;
+int count = 0;
+int canConnect = 0;
+int haveLine = 0;
+int delay = 0;
+int turn = 0;
+int endSearch = 0;
 
 struct Direction {
     int x, y;
@@ -47,21 +61,21 @@ sf::RenderWindow window(sf::VideoMode(1000, 700), "PIKACHU");
 sf::RectangleShape rectangleOutLineStart(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
 sf::RectangleShape rectangleOutLineEnd(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
 sf::Color pokemonBackground(255, 218, 251); 
+sf::VertexArray line(sf::Lines);
 sf::Texture backgroundTexture;
 sf::Sprite backgroundSprite;
 sf::Event event;
 
+std::vector<Direction> lines;
+
 void generateRandomPokemon();
 void generateBoard();
 void play();
+void BFS();
+void makeLine(int x, int y);
+void drawLine();
 
 int main() {
-    for (int i=0; i<ROW+2; i++) {
-        for (int j=0; j<COLUMN+2; j++) {
-            BOARD[i][j] = 0;
-        }
-    }
-
     generateRandomPokemon();
 
     if (!backgroundTexture.loadFromFile("./src/image/background/thumb-1920-574726.jpg")) {
@@ -87,7 +101,12 @@ int main() {
         }
 
         if (couple[1]) {
-            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y)) {
+            canConnect = 0;
+            BFS();
+            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y) && count <= 3 && canConnect) {
+                endSearch = 0;
+                makeLine(start.x, start.y);
+                drawLine();
                 BOARD[start.y][start.x] = 0;
                 BOARD[end.y][end.x] = 0;
             }
@@ -101,12 +120,21 @@ int main() {
         generateBoard();
         
         if (couple[0]) {
-            std::cout << "Start " << couple[0] << " " << couple[1] << std::endl;
             window.draw(rectangleOutLineStart); 
         } 
         if (couple[1]) {
-            std::cout << "End " << couple[0] << " " << couple[1] << std::endl;
             window.draw(rectangleOutLineEnd); 
+        }
+        if (delay == delayTimeLine) {
+            line.clear();   
+            lines.clear();
+            haveLine = 0;
+            delay = 0;
+        }
+        if (haveLine) {
+            delay++;
+            std::cout << delay << "\n";
+            window.draw(line);
         }
 
         window.display();
@@ -196,4 +224,84 @@ void play() {
             }
         }
     }
+}
+
+void BFS() {
+    std::queue<Direction> q;
+
+    for (int i=0; i<ROW+2; i++) {
+        for (int j=0; j<COLUMN+2; j++) {
+            visited[i][j] = 0;
+        }
+    }
+
+    q.push(start);
+    visited[start.y][start.x] = 1;
+    while (!q.empty()) {
+        Direction cell = q.front();
+        q.pop();
+
+        if (cell.x == end.x && cell.y == end.y) {
+            canConnect = 1;
+            std::cout << "connected\n"; 
+            break;
+        }
+
+        for (int i=0; i<4; i++) {
+            int nx = cell.x + dx[i];
+            int ny = cell.y + dy[i];      
+            if (nx>=0 && nx<COLUMN+2 && ny>=0 && ny<ROW+2 &&
+                !BOARD[ny][nx] && !visited[ny][nx] || (nx==end.x && ny==end.y)) {
+                    visited[ny][nx] = 1;
+                    q.push({nx, ny});
+            }      
+        }
+    }
+    for (int i=0; i<ROW+2; i++) {
+        for (int j=0; j<COLUMN+2; j++) {
+            std::cout << visited[i][j];
+        }
+        std::cout << "\n";
+    }
+}
+
+void makeLine(int x, int y) {
+    int check = 0;
+    if (x == end.x && y == end.y) {
+        lines.push_back({x, y});
+        endSearch = 1;
+        return;
+    }
+    if (!endSearch && visited[y][x]>0 && x>=0 && x<COLUMN+2 && y>=0 && y<ROW+2) {
+        lines.push_back({x, y});
+        visited[y][x] = -1;
+        for (int i=0; i<4; i++) {
+            makeLine(x+dx[i], y+dy[i]);
+        }
+        if (!endSearch) {
+            for (int i=0; i<4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];      
+                if (nx>=0 && nx<COLUMN+2 && ny>=0 && ny<ROW+2 && visited[ny][nx] == 1) {
+                    check = 1;
+                }      
+            }
+            if (!check && !lines.empty()) {
+                lines.pop_back();
+            }
+        }
+    }
+}
+
+void drawLine() {
+    std::cout << "run\n";
+    for (int i=0; i<lines.size()-1; i++) {
+        int xStart = SQUARE_SIZE*lines[i].x + SQUARE_SIZE/2;
+        int yStart = SQUARE_SIZE*lines[i].y + SQUARE_SIZE/2;
+        int xEnd = SQUARE_SIZE*lines[i+1].x + SQUARE_SIZE/2;
+        int yEnd = SQUARE_SIZE*lines[i+1].y + SQUARE_SIZE/2;
+        line.append(sf::Vertex(sf::Vector2f(xStart, yStart), sf::Color::Red)); 
+        line.append(sf::Vertex(sf::Vector2f(xEnd, yEnd), sf::Color::Red));
+    }
+    haveLine = 1;
 }
