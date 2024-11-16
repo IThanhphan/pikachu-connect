@@ -43,12 +43,12 @@ int visited[ROW+2][COLUMN+2] = {};
 int couple[2] = {0, 0};
 int startFlat = 1;
 int endFlat = 0;
-int count = 0;
 int canConnect = 0;
 int haveLine = 0;
 int delay = 0;
-int turn = 0;
 int endSearch = 0;
+int directionLine = 0;
+int preDirectionLine = 0;
 
 struct Direction {
     int x, y;
@@ -67,6 +67,7 @@ sf::Sprite backgroundSprite;
 sf::Event event;
 
 std::vector<Direction> lines;
+std::vector<Direction> corners;
 
 void generateRandomPokemon();
 void generateBoard();
@@ -74,6 +75,7 @@ void play();
 void BFS();
 void makeLine(int x, int y);
 void drawLine();
+void determineDirection(int a, int b);
 
 int main() {
     generateRandomPokemon();
@@ -103,12 +105,17 @@ int main() {
         if (couple[1]) {
             canConnect = 0;
             BFS();
-            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y) && count <= 3 && canConnect) {
+            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y) && canConnect) {
                 endSearch = 0;
+                directionLine = 0;
+                preDirectionLine = 0;
+                corners.clear();
                 makeLine(start.x, start.y);
-                drawLine();
-                BOARD[start.y][start.x] = 0;
-                BOARD[end.y][end.x] = 0;
+                if (endSearch) {
+                    drawLine();
+                    BOARD[start.y][start.x] = 0;
+                    BOARD[end.y][end.x] = 0;
+                }
             }
             couple[0] = 0;
             couple[1] = 0;
@@ -133,7 +140,6 @@ int main() {
         }
         if (haveLine) {
             delay++;
-            std::cout << delay << "\n";
             window.draw(line);
         }
 
@@ -243,7 +249,6 @@ void BFS() {
 
         if (cell.x == end.x && cell.y == end.y) {
             canConnect = 1;
-            std::cout << "connected\n"; 
             break;
         }
 
@@ -257,44 +262,88 @@ void BFS() {
             }      
         }
     }
-    for (int i=0; i<ROW+2; i++) {
-        for (int j=0; j<COLUMN+2; j++) {
-            std::cout << visited[i][j];
-        }
-        std::cout << "\n";
+}
+
+void determineDirection(int a, int b) {
+    if (a==-1 && b==0) {
+        directionLine = 1;
+    } else if (a==0 && b==-1) {
+        directionLine = 2;
+    } else if (a==1 && b==0) {
+        directionLine = 3;
+    } else if (a==0 && b==1) {
+        directionLine = 4;
     }
 }
 
 void makeLine(int x, int y) {
-    int check = 0;
-    if (x == end.x && y == end.y) {
+    if (!endSearch && x>=0 && x<COLUMN+2 && y>=0 && y<ROW+2 && visited[y][x]>0) {
+        for (int i=0; i<lines.size(); i++) {
+            if (x == lines[i].x && y == lines[i].y) {
+                return;
+            }
+        }
         lines.push_back({x, y});
-        endSearch = 1;
-        return;
-    }
-    if (!endSearch && visited[y][x]>0 && x>=0 && x<COLUMN+2 && y>=0 && y<ROW+2) {
-        lines.push_back({x, y});
-        visited[y][x] = -1;
-        for (int i=0; i<4; i++) {
-            makeLine(x+dx[i], y+dy[i]);
+        visited[y][x] = 2;
+        if (lines.size() >= 2) {
+            preDirectionLine = directionLine;
+            determineDirection(lines.back().x-lines[lines.size()-2].x, lines.back().y-lines[lines.size()-2].y);
+
+            if (directionLine != preDirectionLine && preDirectionLine && abs(directionLine-preDirectionLine)%2!=0) {
+                corners.push_back({lines[lines.size()-2].x, lines[lines.size()-2].y});  
+            }
+            if (corners.size() > 2) {  
+                corners.pop_back();
+                lines.pop_back();
+                return;
+            }
+        }
+        if (x == end.x && y == end.y && corners.size() <= 2) {
+            endSearch = 1;
+            return;
+        }
+        int cx = end.x - x;
+        int cy = end.y - y;
+        if ((cx>0 && cy>0) || (cx==0 && cy>0)) {
+            makeLine(x, y+1); //xuống
+            makeLine(x+1, y); //phải
+            makeLine(x, y-1); //lên
+            makeLine(x-1, y); //trái
+        } else if ((cx>0 && cy<0) || (cx>0 && cy==0)) {
+            makeLine(x+1, y); //phải
+            makeLine(x, y-1); //lên
+            makeLine(x-1, y); //trái
+            makeLine(x, y+1); //xuống
+        } else if ((cx<0 && cy<0) || (cx==0 && cy<0)) {
+            makeLine(x, y-1); //lên
+            makeLine(x-1, y); //trái
+            makeLine(x, y+1); //xuống
+            makeLine(x+1, y); //phải
+        } else if ((cx<0 && cy>0) || (cx<0 && cy==0)) {
+            makeLine(x-1, y); //trái
+            makeLine(x, y+1); //xuống
+            makeLine(x+1, y); //phải
+            makeLine(x, y-1); //lên
         }
         if (!endSearch) {
-            for (int i=0; i<4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];      
-                if (nx>=0 && nx<COLUMN+2 && ny>=0 && ny<ROW+2 && visited[ny][nx] == 1) {
-                    check = 1;
-                }      
-            }
-            if (!check && !lines.empty()) {
+            if (!lines.empty()) {
                 lines.pop_back();
+                if (!corners.empty()) {
+                    if (corners.back().x == lines.back().x && corners.back().y == lines.back().y) {
+                        corners.pop_back();
+                    }
+                }
+                if (lines.size() >= 2) {
+                    determineDirection(lines.back().x-lines[lines.size()-2].x, lines.back().y-lines[lines.size()-2].y);
+                } else {
+                    directionLine = 0;
+                }
             }
         }
     }
 }
 
 void drawLine() {
-    std::cout << "run\n";
     for (int i=0; i<lines.size()-1; i++) {
         int xStart = SQUARE_SIZE*lines[i].x + SQUARE_SIZE/2;
         int yStart = SQUARE_SIZE*lines[i].y + SQUARE_SIZE/2;
