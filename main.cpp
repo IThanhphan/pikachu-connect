@@ -6,16 +6,20 @@
 #include <vector>
 #include <queue>
 #include <cmath>
+#include <thread>
+#include <chrono>
+#include <atomic>
 
+const int WIDTH_WINDOW = 1400;
+const int HEIGHT_WINDOW = 700;
 const int ROW = 6;
 const int COLUMN = 12;
 const int NUMBER_OF_POKEMON = 18;
 const int NUMBER_OF_EACH_POKEMON = 4;
-const int EMPTY = 0;
+const int DELAY_TIME_LINE = 20;
 const int SQUARE_SIZE = 60.f;
-const int delayTimeLine = 50;
-const int dx[] = {-1, 0, 1, 0}; 
-const int dy[] = {0, -1, 0, 1};
+const int WIDTH_RECTANGLE_TIMER = WIDTH_WINDOW - 2 * SQUARE_SIZE;
+const int HEIGHT_RECTANGLE_TIMER = SQUARE_SIZE;
 const std::string POKEMONS[NUMBER_OF_POKEMON+1] = {
     "",
     "./src/image/pokemons/1.png",
@@ -39,16 +43,21 @@ const std::string POKEMONS[NUMBER_OF_POKEMON+1] = {
 };
 
 int BOARD[ROW+2][COLUMN+2] = {};
-int visited[ROW+2][COLUMN+2] = {};
 int couple[2] = {0, 0};
 int startFlat = 1;
 int endFlat = 0;
-int canConnect = 0;
 int haveLine = 0;
 int delay = 0;
 int endSearch = 0;
 int directionLine = 0;
 int preDirectionLine = 0;
+
+double timeLimit = 180;
+double second = timeLimit;
+double widthRectangleCountDown = WIDTH_RECTANGLE_TIMER;
+double heightRectangleCountDown = HEIGHT_RECTANGLE_TIMER;
+
+std::string timeStr;
 
 struct Direction {
     int x, y;
@@ -57,7 +66,7 @@ struct Direction {
 Direction start;
 Direction end;
 
-sf::RenderWindow window(sf::VideoMode(1000, 700), "PIKACHU");
+sf::RenderWindow window(sf::VideoMode(WIDTH_WINDOW, HEIGHT_WINDOW), "PIKACHU");
 sf::RectangleShape rectangleOutLineStart(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
 sf::RectangleShape rectangleOutLineEnd(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
 sf::Color pokemonBackground(255, 218, 251); 
@@ -69,13 +78,16 @@ sf::Event event;
 std::vector<Direction> lines;
 std::vector<Direction> corners;
 
+std::atomic<bool> runningTimer(true);
+
 void generateRandomPokemon();
 void generateBoard();
 void play();
-void BFS();
 void makeLine(int x, int y);
 void drawLine();
 void determineDirection(int a, int b);
+void timer();
+void countdown(int seconds);
 
 int main() {
     generateRandomPokemon();
@@ -89,23 +101,20 @@ int main() {
     float scaleX = static_cast<float>(window.getSize().x) / backgroundTexture.getSize().x;
     float scaleY = static_cast<float>(window.getSize().y) / backgroundTexture.getSize().y; 
     backgroundSprite.setScale(scaleX, scaleY);
-
-    while (window.isOpen())
-    {
+    std::thread countdown_thread(countdown, second);
+    while (window.isOpen()) {
         window.clear();
         window.draw(backgroundSprite);
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
+                runningTimer = false;
                 window.close();
             }
             play();
         }
 
         if (couple[1]) {
-            canConnect = 0;
-            BFS();
-            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y) && canConnect) {
+            if (couple[0] == couple[1] && (start.x != end.x || start.y != end.y)) {
                 endSearch = 0;
                 directionLine = 0;
                 preDirectionLine = 0;
@@ -125,6 +134,7 @@ int main() {
             start.y = -1;
         }
         generateBoard();
+        timer();
         
         if (couple[0]) {
             window.draw(rectangleOutLineStart); 
@@ -132,7 +142,7 @@ int main() {
         if (couple[1]) {
             window.draw(rectangleOutLineEnd); 
         }
-        if (delay == delayTimeLine) {
+        if (delay == DELAY_TIME_LINE) {
             line.clear();   
             lines.clear();
             haveLine = 0;
@@ -144,6 +154,10 @@ int main() {
         }
 
         window.display();
+        sf::sleep(sf::seconds(0.01));
+    }
+    if (countdown_thread.joinable()) {
+        countdown_thread.join();
     }
     return 0;
 }
@@ -164,7 +178,7 @@ void generateRandomPokemon() {
             do {
                 randomRow = distrRow(genRow);
                 randomCol = distrCol(genCol);
-            } while (BOARD[randomRow][randomCol] != EMPTY);
+            } while (BOARD[randomRow][randomCol] != 0);
             BOARD[randomRow][randomCol] = i;
         }
     }
@@ -232,38 +246,6 @@ void play() {
     }
 }
 
-void BFS() {
-    std::queue<Direction> q;
-
-    for (int i=0; i<ROW+2; i++) {
-        for (int j=0; j<COLUMN+2; j++) {
-            visited[i][j] = 0;
-        }
-    }
-
-    q.push(start);
-    visited[start.y][start.x] = 1;
-    while (!q.empty()) {
-        Direction cell = q.front();
-        q.pop();
-
-        if (cell.x == end.x && cell.y == end.y) {
-            canConnect = 1;
-            break;
-        }
-
-        for (int i=0; i<4; i++) {
-            int nx = cell.x + dx[i];
-            int ny = cell.y + dy[i];      
-            if (nx>=0 && nx<COLUMN+2 && ny>=0 && ny<ROW+2 &&
-                !BOARD[ny][nx] && !visited[ny][nx] || (nx==end.x && ny==end.y)) {
-                    visited[ny][nx] = 1;
-                    q.push({nx, ny});
-            }      
-        }
-    }
-}
-
 void determineDirection(int a, int b) {
     if (a==-1 && b==0) {
         directionLine = 1;
@@ -277,14 +259,14 @@ void determineDirection(int a, int b) {
 }
 
 void makeLine(int x, int y) {
-    if (!endSearch && x>=0 && x<COLUMN+2 && y>=0 && y<ROW+2 && visited[y][x]>0) {
+    if (!endSearch && x>=0 && x<COLUMN+2 && y>=0 && y<ROW+2 && 
+        (BOARD[y][x]==0 || (x==end.x && y==end.y) || (x==start.x && y==start.y))) {
         for (int i=0; i<lines.size(); i++) {
             if (x == lines[i].x && y == lines[i].y) {
                 return;
             }
         }
         lines.push_back({x, y});
-        visited[y][x] = 2;
         if (lines.size() >= 2) {
             preDirectionLine = directionLine;
             determineDirection(lines.back().x-lines[lines.size()-2].x, lines.back().y-lines[lines.size()-2].y);
@@ -302,24 +284,24 @@ void makeLine(int x, int y) {
             endSearch = 1;
             return;
         }
-        int cx = end.x - x;
-        int cy = end.y - y;
-        if ((cx>0 && cy>0) || (cx==0 && cy>0)) {
+        int dx = end.x - x;
+        int dy = end.y - y;
+        if ((dx>0 && dy>0) || (dx==0 && dy>0)) {
             makeLine(x, y+1); //xuống
             makeLine(x+1, y); //phải
             makeLine(x, y-1); //lên
             makeLine(x-1, y); //trái
-        } else if ((cx>0 && cy<0) || (cx>0 && cy==0)) {
+        } else if ((dx>0 && dy<0) || (dx>0 && dy==0)) {
             makeLine(x+1, y); //phải
             makeLine(x, y-1); //lên
             makeLine(x-1, y); //trái
             makeLine(x, y+1); //xuống
-        } else if ((cx<0 && cy<0) || (cx==0 && cy<0)) {
+        } else if ((dx<0 && dy<0) || (dx==0 && dy<0)) {
             makeLine(x, y-1); //lên
             makeLine(x-1, y); //trái
             makeLine(x, y+1); //xuống
             makeLine(x+1, y); //phải
-        } else if ((cx<0 && cy>0) || (cx<0 && cy==0)) {
+        } else if ((dx<0 && dy>0) || (dx<0 && dy==0)) {
             makeLine(x-1, y); //trái
             makeLine(x, y+1); //xuống
             makeLine(x+1, y); //phải
@@ -354,3 +336,45 @@ void drawLine() {
     }
     haveLine = 1;
 }
+
+void countdown(int seconds) {
+    while (seconds > 0 && runningTimer) {
+        int minutes = seconds / 60;
+        int secs = seconds % 60;
+
+        timeStr = (minutes < 10 ? "0" : "")+std::to_string(minutes)+":"+(secs < 10 ? "0" : "")+std::to_string(secs);
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        seconds--;
+        second--;
+    }
+    if (runningTimer) {
+        timeStr = "Time's up!";
+    } 
+}
+
+
+void timer() {
+    sf::RectangleShape rectangleTimer(sf::Vector2f(WIDTH_RECTANGLE_TIMER, HEIGHT_RECTANGLE_TIMER));
+    rectangleTimer.setPosition(SQUARE_SIZE, HEIGHT_WINDOW - 2 * SQUARE_SIZE); 
+    rectangleTimer.setFillColor(sf::Color::Transparent);
+    rectangleTimer.setOutlineColor(sf::Color::Black);
+    rectangleTimer.setOutlineThickness(1.f);
+    window.draw(rectangleTimer);
+
+    double dt = second/timeLimit;
+    sf::RectangleShape rectangleCountDown(sf::Vector2f(widthRectangleCountDown*dt, heightRectangleCountDown));
+    rectangleCountDown.setPosition(SQUARE_SIZE, HEIGHT_WINDOW - 2 * SQUARE_SIZE); 
+    rectangleCountDown.setFillColor(sf::Color::Red);
+    window.draw(rectangleCountDown);
+
+    sf::Font font;
+    int FontSize = 30;
+    font.loadFromFile("./src/font/arial.ttf");
+    sf::Text Time(timeStr, font, FontSize);
+    sf::FloatRect timeBounds = Time.getLocalBounds();
+    Time.setFillColor(sf::Color::White);
+    Time.setPosition(WIDTH_WINDOW/2 - timeBounds.width/2, HEIGHT_WINDOW - (3*SQUARE_SIZE)/2 - timeBounds.height);
+    window.draw(Time);
+}
+
