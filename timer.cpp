@@ -1,21 +1,36 @@
 #include "timer.hpp"
+#include "point.hpp"
 
 void countdown(int seconds) {
-    while (seconds > 0 && runningTimer) {
-        int minutes = seconds / 60;
-        int secs = seconds % 60;
-        // In định dạng mm:ss
-        timeStr = (minutes < 10 ? "0" : "")+std::to_string(minutes)+":"+(secs < 10 ? "0" : "")+std::to_string(secs);
-        //ngưng luồng hoạt động của thời gian 1 giây
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        seconds--;
-        second--; //biến toàn cục để cập nhật lại thời gian in ra màn hình
+    while (isCountDown) {
+        seconds = second;
+        while (seconds > 0 && runningTimer) {
+            isEnd = 0;
+            seconds = second;
+            int minutes = seconds / 60;
+            int secs = seconds % 60;
+            // In định dạng mm:ss
+            timeStr = (minutes < 10 ? "0" : "")+std::to_string(minutes)+":"+(secs < 10 ? "0" : "")+std::to_string(secs);
+            //ngưng luồng hoạt động của thời gian 1 giây
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            seconds--;
+            second--; //biến toàn cục để cập nhật lại thời gian in ra màn hình
+        }
+        if (runningTimer && !isEnd) {
+            Node *root = build(0, v.size() - 1);
+            Node *result = search(root, score);
+            if (result != NULL) {
+                std::cout << "Found: " << result->data << std::endl;
+                resultText = "You Found!!!";
+            } else {
+                std::cout << "Not Found: " << score << std::endl;
+                resultText = "You Lose!!!"; //in ra màn hình You Lose!!! 
+            }
+            timeStr = "Time's up!"; //in ra màn hình Time's up!
+        }      
+        isEnd=1;
     }
-    if (runningTimer) {
-        resultText = "You Lose!!!"; //in ra màn hình You Lose!!!
-        isLose = 1; //đánh dấu đã thua
-        timeStr = "Time's up!"; //in ra màn hình Time's up!
-    } 
+    
 }
 
 
@@ -27,16 +42,14 @@ void drawTimer() {
     rectangleTimer.setOutlineThickness(1.f); 
     window.draw(rectangleTimer); 
 
-    double dt = second/timeLimit; 
+    float dt = second/timeLimit; 
     sf::RectangleShape rectangleCountDown(sf::Vector2f(widthRectangleCountDown*dt, heightRectangleCountDown)); 
     rectangleCountDown.setPosition(SQUARE_SIZE, HEIGHT_WINDOW - 2 * SQUARE_SIZE); 
     rectangleCountDown.setFillColor(sf::Color::Red);
     window.draw(rectangleCountDown);
 
-    sf::Font font; 
-    int FontSize = 30;
     font.loadFromFile("./src/font/arial.ttf");
-    sf::Text Time(timeStr, font, FontSize);
+    sf::Text Time(timeStr, font, 30);
     sf::FloatRect timeBounds = Time.getLocalBounds(); 
     Time.setFillColor(sf::Color::White); 
     Time.setPosition(WIDTH_WINDOW/2 - timeBounds.width/2, HEIGHT_WINDOW - (3*SQUARE_SIZE)/2 - timeBounds.height);

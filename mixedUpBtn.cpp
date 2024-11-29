@@ -1,4 +1,5 @@
 #include "mixedUpBtn.hpp"
+#include "point.hpp"
 
 void mixedUp() {
     if (event.type == sf::Event::MouseButtonPressed) {
@@ -8,8 +9,10 @@ void mixedUp() {
             if (x>=(SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2) &&
                 x<=(SQUARE_SIZE*(COLUMN+2))/2+(WIDTH_MIXED_UP_BTN/2) &&
                 y>=SQUARE_SIZE*(ROW+2) &&
-                y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN) 
+                y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN && second > 5) 
             {
+                second-=5;
+                score-=5;
                 for (int i=1; i<=NUMBER_OF_POKEMON*2; i++) {
                     for (int j=0; j<=1; j++) {
                         std::random_device rd;
@@ -35,19 +38,17 @@ void mixedUp() {
 void drawMixedUpBtn() {
     sf::RectangleShape rectangleMixedUp(sf::Vector2f(WIDTH_MIXED_UP_BTN, HEIGHT_MIXED_UP_BTN)); 
     rectangleMixedUp.setPosition((SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2), SQUARE_SIZE*(ROW+2)); 
-    rectangleMixedUp.setFillColor(sf::Color::White); 
+    rectangleMixedUp.setFillColor(mixedUpBtnBackground); 
     rectangleMixedUp.setOutlineColor(sf::Color::Black); 
     rectangleMixedUp.setOutlineThickness(1.f); 
     window.draw(rectangleMixedUp); 
 
-    sf::Font font; 
-    int FontSize = 30;
     font.loadFromFile("./src/font/arial.ttf");
-    sf::Text MixedBtn("Mixed Up Button", font, FontSize);
+    sf::Text MixedBtn("Mixed Up", font, 30);
     sf::FloatRect mixedBtnBounds = MixedBtn.getLocalBounds(); 
-    MixedBtn.setFillColor(sf::Color::Black); 
-    double positionX = 1.0*(SQUARE_SIZE*(COLUMN+2))/2-(mixedBtnBounds.width/2);
-    double positionY = 1.0*(SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN/2 - mixedBtnBounds.height/2);
+    MixedBtn.setFillColor(sf::Color::White); 
+    float positionX = (SQUARE_SIZE*(COLUMN+2))/2-mixedBtnBounds.width/2;
+    float positionY = SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN/2 - mixedBtnBounds.height/2;
     MixedBtn.setPosition(positionX, positionY);
     window.draw(MixedBtn);
 }

@@ -13,16 +13,17 @@
 #include <chrono>
 #include <atomic>
 
-const int WIDTH_WINDOW = 1400; //chiều rộng cửa sổ trò chơi
-const int HEIGHT_WINDOW = 700; //chiều cao cửa sổ trò chơi
+const float WIDTH_WINDOW = 1400; //chiều rộng cửa sổ trò chơi
+const float HEIGHT_WINDOW = 700; //chiều cao cửa sổ trò chơi
+const float SQUARE_SIZE = 60; //kích thước hình vuông chứa mỗi pokemon
+const float WIDTH_RESULT_TABLE = 400; //chiều rộng bảng kết quả
+const float HEIGHT_RESULT_TABLE = WIDTH_RESULT_TABLE; //chiều cao bảng kết quả
+
 const int ROW = 6; //số hàng của ma trận hiện pokemon
 const int COLUMN = 12; //số cột của ma trận hiện pokemon
 const int NUMBER_OF_POKEMON = 18; //số lượng pokemon
 const int NUMBER_OF_EACH_POKEMON = 4; //số lượng mỗi loại pokemon
 const int DELAY_TIME_LINE = 20; //thời gian xuất hiện của đường nối 2 pokemon
-const int SQUARE_SIZE = 60.f; //kích thước hình vuông chứa mỗi pokemon
-const int WIDTH_RESULT_TABLE = 300; //chiều rộng bảng kết quả
-const int HEIGHT_RESULT_TABLE = WIDTH_RESULT_TABLE; //chiều cao bảng kết quả
 //mảng chứa các pokemon, mỗi vị trí của pokemon trong mảng là id của pokemon đó trong ma trận, vị trí đầu tiên để trống để chỉ định đó là vị trí rỗng id=0
 const std::string POKEMONS[NUMBER_OF_POKEMON+1] = {
     "",
@@ -55,7 +56,12 @@ int delay = 0; //biến có thể tăng đến thời gian giới hạn đườn
 int endSearch = 0;// biến xác định đã có được đường đi đúng
 int directionLine = 0; //hướng đi hiện tại của đường thẳng
 int preDirectionLine = 0; //hướng đi trước đó của đường thẳng
-int isLose = 0; //biến xác định đã thua khi thời gian đếm ngược về 0
+int isEnd = 0; //biến xác định đã thắng thua hay chưa
+
+float plgPosX;
+float plgPosY;
+float widthPlg;
+float heightPlg;
 
 std::string resultText;// biến chuỗi in ra kết quả
 //struct chứa tọa độ x, y trên ma trận
@@ -74,6 +80,7 @@ sf::VertexArray line(sf::Lines); //đối tượng một mảng các đường t
 sf::Texture backgroundTexture;  //kết cấu hình nền trò chơi
 sf::Sprite backgroundSprite;
 sf::Event event; //đối tượng chứa các sự kiện trong quá trình chơi
+sf::Font font;
 
 std::vector<Direction> lines; //mảng chứa cấu hình đường đi
 std::vector<Direction> corners; //mảng chứa các góc khi đương đi rẽ
@@ -85,6 +92,7 @@ void makeLine(int x, int y); //hàm tạo ra cấu hình đường đi đúng
 void drawLine(); //hàm vẽ ra đường đi đúng
 void determineDirection(int a, int b); //hàm xác định đường đi đang đi hướng nào
 void drawResultTable(std::string result); //hàm vẽ ra bảng kết quả
+void playAgain();
 
 bool isWin(); //hàm xác định đã chiến thắng hay chưa
 
