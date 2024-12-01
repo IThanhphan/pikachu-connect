@@ -42,12 +42,19 @@ int main() {
                 isCountDown = 0;
                 window.close();
             }
-            //sự kiện chơi trò chơi khi chưa thua
-            if (!isEnd) {
-                play();
-                mixedUp();
-            } else {
-                playAgain();
+            //sự kiện chơi trò chơi click chuột
+            if (event.type == sf::Event::MouseButtonPressed) { 
+                if (!isEnd) { //khi chưa kết thúc
+                    selectLevelBtn();
+                    if (!levelOnOff) {
+                        play();
+                        mixedUp(); 
+                    } else {  
+                        selectLevel();
+                    }    
+                } else { //khi kết thúc
+                    playAgainOrNext();
+                }
             }
         }
         //nếu pokemon kết thúc được nhấn vào
@@ -62,7 +69,7 @@ int main() {
                 //nếu tìm thấy đường đi đúng
                 if (endSearch) {
                     //khang
-                    score ++;
+                    score++;
                     drawLine(); //vẽ đường đi đúng
                     BOARD[start.y][start.x] = 0; //đặt lại tại vi trí bắt đầu là rỗng (=0)
                     BOARD[end.y][end.x] = 0; //đặt lại tại vi trí kết thúc là rỗng (=0)
@@ -76,10 +83,31 @@ int main() {
             end.x = -1;
             start.y = -1;
         }
+        switch (levelSelected) {
+            case 2:
+                level2();
+                break;
+            case 3:
+                level3();
+                break;
+            case 4:
+                level4();
+                break;
+            case 5:
+                level5();
+                break;
+            default:
+                break;
+        }
         generateBoard(); //vẽ ma trận pokemon
         drawTimer(); //vẽ thanh thời gian
         drawMixedUpBtn(); //vẽ nút làm xáo trộn các pokemon
         drawScoreTable(); //vẽ thanh điểm
+        drawBarsIcon();
+        drawCurrentLevel();
+        if (levelOnOff) {
+            drawLevels();
+        }
         
         //nếu pokemon bắt đầu được nhấn (id pokemon != 0)
         if (couple[0]) {

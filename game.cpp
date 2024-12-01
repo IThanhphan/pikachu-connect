@@ -2,6 +2,7 @@
 #include "timer.cpp"
 #include "mixedUpBtn.cpp"
 #include "point.cpp"
+#include "levels.cpp"
 
 void generateRandomPokemon() {
     std::random_device rd; 
@@ -51,36 +52,34 @@ void generateBoard() {
 }
 
 void play() {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            int x = event.mouseButton.x;
-            int y = event.mouseButton.y;
-            for (int i=1; i<=ROW; i++) {
-                for (int j=1; j<=COLUMN; j++) {
-                    if (x>=SQUARE_SIZE*j && x<=(SQUARE_SIZE*j)+SQUARE_SIZE && 
-                        y>=SQUARE_SIZE*i && y<=(SQUARE_SIZE*i)+SQUARE_SIZE) {  
-                        if (startFlat && !endFlat) {
-                            rectangleOutLineStart.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
-                            rectangleOutLineStart.setFillColor(sf::Color::Transparent);
-                            rectangleOutLineStart.setOutlineColor(sf::Color::Red);
-                            rectangleOutLineStart.setOutlineThickness(3.f);  
-                            couple[0] = BOARD[i][j];
-                            start.x = j;
-                            start.y = i;
-                            startFlat = 0;
-                            endFlat = 1;
-                        } else if (endFlat && !startFlat) {
-                            rectangleOutLineEnd.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
-                            rectangleOutLineEnd.setFillColor(sf::Color::Transparent);
-                            rectangleOutLineEnd.setOutlineColor(sf::Color::Red);
-                            rectangleOutLineEnd.setOutlineThickness(3.f);
-                            couple[1] = BOARD[i][j]; 
-                            end.x = j;
-                            end.y = i;
-                            startFlat = 1;
-                            endFlat = 0;
-                        }             
-                    }
+    if (event.mouseButton.button == sf::Mouse::Left) {
+        int x = event.mouseButton.x;
+        int y = event.mouseButton.y;
+        for (int i=1; i<=ROW; i++) {
+            for (int j=1; j<=COLUMN; j++) {
+                if (x>=SQUARE_SIZE*j && x<=(SQUARE_SIZE*j)+SQUARE_SIZE && 
+                    y>=SQUARE_SIZE*i && y<=(SQUARE_SIZE*i)+SQUARE_SIZE) {  
+                    if (startFlat && !endFlat) {
+                        rectangleOutLineStart.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
+                        rectangleOutLineStart.setFillColor(sf::Color::Transparent);
+                        rectangleOutLineStart.setOutlineColor(sf::Color::Red);
+                        rectangleOutLineStart.setOutlineThickness(3.f);  
+                        couple[0] = BOARD[i][j];
+                        start.x = j;
+                        start.y = i;
+                        startFlat = 0;
+                        endFlat = 1;
+                    } else if (endFlat && !startFlat) {
+                        rectangleOutLineEnd.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
+                        rectangleOutLineEnd.setFillColor(sf::Color::Transparent);
+                        rectangleOutLineEnd.setOutlineColor(sf::Color::Red);
+                        rectangleOutLineEnd.setOutlineThickness(3.f);
+                        couple[1] = BOARD[i][j]; 
+                        end.x = j;
+                        end.y = i;
+                        startFlat = 1;
+                        endFlat = 0;
+                    }             
                 }
             }
         }
@@ -189,6 +188,7 @@ bool isWin() {
     resultText = "You Win!!!";
     runningTimer = false;
     isEnd = 1;
+    levelPassed[levelSelected] = 1;
     return true;
 }
 
@@ -207,13 +207,19 @@ void drawResultTable(std::string result) {
     Result.setPosition(WIDTH_WINDOW/2 - resultBounds.width/2, HEIGHT_WINDOW/2 - 3*resultBounds.height);
     window.draw(Result);
 
-    sf::Text ResultPoint("Your point: " + std::to_string(score), font, 40);
+    sf::Text ResultPoint("Your point: " + std::to_string(score + (int)second), font, 40);
     sf::FloatRect ResultPointBounds = ResultPoint.getLocalBounds();
     ResultPoint.setFillColor(sf::Color::Black);
     ResultPoint.setPosition(WIDTH_WINDOW/2 - ResultPointBounds.width/2, HEIGHT_WINDOW/2-ResultPointBounds.height/2);
     window.draw(ResultPoint);
 
-    sf::Text plg("Play again", font, 40);
+    std::string nextOrAgain;
+    if (levelPassed[levelSelected-1] && levelSelected!=NUMBER_OF_LEVEL && levelPassed[levelSelected]) {
+        nextOrAgain = "Next level";
+    } else {
+        nextOrAgain = "Play again";
+    }
+    sf::Text plg(nextOrAgain, font, 40);
     sf::FloatRect plgBounds = plg.getLocalBounds();
     plg.setFillColor(sf::Color::Red);
     plgPosX = WIDTH_WINDOW/2 - plgBounds.width/2;
@@ -224,24 +230,29 @@ void drawResultTable(std::string result) {
     window.draw(plg);
 }
 
-void playAgain() {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            int x = event.mouseButton.x;
-            int y = event.mouseButton.y;
-            if (x>=plgPosX && x<=plgPosX+widthPlg &&
-                y>=plgPosY && y<=plgPosY+heightPlg) {
-                for (int i=0; i<ROW+2; i++) {
-                    for (int j=0; j<COLUMN+2; j++) {
-                        BOARD[i][j] = 0;
-                    }
-                }
-                generateRandomPokemon();
-                isEnd = 0;
-                score = 0;
-                second = timeLimit;
-                runningTimer = true;
-            }
+void reset() {
+    for (int i=0; i<ROW+2; i++) {
+        for (int j=0; j<COLUMN+2; j++) {
+            BOARD[i][j] = 0;
         }
     }
+    generateRandomPokemon();
+    isEnd = 0;
+    score = 0;
+    second = timeLimit;
+    runningTimer = true;
+}
+
+void playAgainOrNext() {
+    if (event.mouseButton.button == sf::Mouse::Left) {
+        int x = event.mouseButton.x;
+        int y = event.mouseButton.y;
+        if (x>=plgPosX && x<=plgPosX+widthPlg &&
+            y>=plgPosY && y<=plgPosY+heightPlg) {
+            reset();
+            if (levelPassed[levelSelected-1] && levelSelected!=NUMBER_OF_LEVEL && levelPassed[levelSelected]) {
+                levelSelected++;
+            }
+        }
+    } 
 }

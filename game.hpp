@@ -92,7 +92,8 @@ void makeLine(int x, int y); //hàm tạo ra cấu hình đường đi đúng
 void drawLine(); //hàm vẽ ra đường đi đúng
 void determineDirection(int a, int b); //hàm xác định đường đi đang đi hướng nào
 void drawResultTable(std::string result); //hàm vẽ ra bảng kết quả
-void playAgain();
+void playAgainOrNext();
+void reset();
 
 bool isWin(); //hàm xác định đã chiến thắng hay chưa
 

@@ -2,37 +2,35 @@
 #include "point.hpp"
 
 void mixedUp() {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            int x = event.mouseButton.x;
-            int y = event.mouseButton.y;
-            if (x>=(SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2) &&
-                x<=(SQUARE_SIZE*(COLUMN+2))/2+(WIDTH_MIXED_UP_BTN/2) &&
-                y>=SQUARE_SIZE*(ROW+2) &&
-                y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN && second > 5) 
-            {
-                second-=5;
-                score-=5;
-                for (int i=1; i<=NUMBER_OF_POKEMON*2; i++) {
-                    for (int j=0; j<=1; j++) {
-                        std::random_device rd;
-                        std::mt19937 Row(rd());
-                        std::uniform_int_distribution<> distrRow(1, 6);
+    if (event.mouseButton.button == sf::Mouse::Left) {
+        int x = event.mouseButton.x;
+        int y = event.mouseButton.y;
+        if (x>=(SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2) &&
+            x<=(SQUARE_SIZE*(COLUMN+2))/2+(WIDTH_MIXED_UP_BTN/2) &&
+            y>=SQUARE_SIZE*(ROW+2) &&
+            y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN && second > 5) 
+        {
+            second-=5;
+            score-=5;
+            for (int i=1; i<=NUMBER_OF_POKEMON*2; i++) {
+                for (int j=0; j<=1; j++) {
+                    std::random_device rd;
+                    std::mt19937 Row(rd());
+                    std::uniform_int_distribution<> distrRow(1, 6);
 
-                        std::random_device cd;
-                        std::mt19937 Col(cd());
-                        std::uniform_int_distribution<> distrCol(1, 12);
+                    std::random_device cd;
+                    std::mt19937 Col(cd());
+                    std::uniform_int_distribution<> distrCol(1, 12);
 
-                        messyCouple.push_back({distrCol(Col), distrRow(Row)});
-                    }
-                    int temp = BOARD[messyCouple[0].y][messyCouple[0].x];
-                    BOARD[messyCouple[0].y][messyCouple[0].x] = BOARD[messyCouple[1].y][messyCouple[1].x];
-                    BOARD[messyCouple[1].y][messyCouple[1].x] = temp;
-                    messyCouple.clear();
+                    messyCouple.push_back({distrCol(Col), distrRow(Row)});
                 }
+                int temp = BOARD[messyCouple[0].y][messyCouple[0].x];
+                BOARD[messyCouple[0].y][messyCouple[0].x] = BOARD[messyCouple[1].y][messyCouple[1].x];
+                BOARD[messyCouple[1].y][messyCouple[1].x] = temp;
+                messyCouple.clear();
             }
         }
-    }
+    } 
 }
 
 void drawMixedUpBtn() {
