@@ -1,7 +1,7 @@
 #ifndef MIXED_UP 
 #define MIXED_UP
 
-#include "game.hpp"
+#include "../gamePlay/game.hpp"
 
 const float WIDTH_MIXED_UP_BTN = 200; //Chiều rộng nút làm xáo trộn các pokemon
 const float HEIGHT_MIXED_UP_BTN = 70; //Chiều cao nút làm xáo trộn các pokemon

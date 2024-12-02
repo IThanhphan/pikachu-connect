@@ -1,7 +1,7 @@
 #ifndef LEVELS 
 #define LEVELS
 
-#include "game.hpp"
+#include "../gamePlay/game.hpp"
 
 const int NUMBER_OF_LEVEL = 5;
 const float SIZE_LEVEL_REC = SQUARE_SIZE*4;

@@ -1,8 +1,9 @@
 #include "game.hpp"
-#include "timer.cpp"
-#include "mixedUpBtn.cpp"
-#include "point.cpp"
-#include "levels.cpp"
+#include "../status/timer.cpp"
+#include "../buttons/mixedUpBtn.cpp"
+#include "../status/point.cpp"
+#include "../levels/levels.cpp"
+#include "../buttons/playAgainBtn.cpp"
 
 void generateRandomPokemon() {
     std::random_device rd; 

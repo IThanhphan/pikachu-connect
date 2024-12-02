@@ -1,5 +1,5 @@
 #include "mixedUpBtn.hpp"
-#include "point.hpp"
+#include "../status/point.hpp"
 
 void mixedUp() {
     if (event.mouseButton.button == sf::Mouse::Left) {

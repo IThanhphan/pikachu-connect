@@ -1,7 +1,7 @@
 #ifndef POINT
 #define POINT
 
-#include "game.hpp"
+#include "../gamePlay/game.hpp"
 
 const float WIDTH_POINT_TABLE = WIDTH_WINDOW - SQUARE_SIZE*(COLUMN+2) - SQUARE_SIZE;
 const float HEIGHT_POINT_TABLE = SQUARE_SIZE;

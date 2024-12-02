@@ -1,4 +1,4 @@
-#include "game.cpp"
+#include "app/gamePlay/game.cpp"
 
 int main() {
     //khang
@@ -49,6 +49,7 @@ int main() {
                     if (!levelOnOff) {
                         play();
                         mixedUp(); 
+                        playAgain();
                     } else {  
                         selectLevel();
                     }    
@@ -105,6 +106,7 @@ int main() {
         drawScoreTable(); //vẽ thanh điểm
         drawBarsIcon();
         drawCurrentLevel();
+        drawPlayAgainBtn();
         if (levelOnOff) {
             drawLevels();
         }

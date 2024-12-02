@@ -1,7 +1,7 @@
 #ifndef TIMER
 #define TIMER
 
-#include "game.hpp"
+#include "../gamePlay/game.hpp"
 
 const float WIDTH_RECTANGLE_TIMER = WIDTH_WINDOW - 2 * SQUARE_SIZE; //chiều rộng thanh thời gian
 const float HEIGHT_RECTANGLE_TIMER = SQUARE_SIZE; //chiều cao thanh thời gian
