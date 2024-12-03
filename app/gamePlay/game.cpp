@@ -1,9 +1,10 @@
 #include "game.hpp"
 #include "../status/timer.cpp"
-#include "../buttons/mixedUpBtn.cpp"
 #include "../status/point.cpp"
-#include "../levels/levels.cpp"
+#include "../status/pokemonDetail.cpp"
+#include "../buttons/mixedUpBtn.cpp"
 #include "../buttons/playAgainBtn.cpp"
+#include "../levels/levels.cpp"
 
 void generateRandomPokemon() {
     std::random_device rd; 
@@ -70,6 +71,7 @@ void play() {
                         start.y = i;
                         startFlat = 0;
                         endFlat = 1;
+                        pokemonID = couple[0];
                     } else if (endFlat && !startFlat) {
                         rectangleOutLineEnd.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
                         rectangleOutLineEnd.setFillColor(sf::Color::Transparent);
@@ -80,6 +82,7 @@ void play() {
                         end.y = i;
                         startFlat = 1;
                         endFlat = 0;
+                        pokemonID = couple[1];
                     }             
                 }
             }
@@ -240,6 +243,8 @@ void reset() {
     generateRandomPokemon();
     isEnd = 0;
     score = 0;
+    pokemonID = 0;
+    couple[0] = 0;
     second = timeLimit;
     runningTimer = true;
 }

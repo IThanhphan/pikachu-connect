@@ -107,6 +107,7 @@ int main() {
         drawBarsIcon();
         drawCurrentLevel();
         drawPlayAgainBtn();
+        drawPokemonDetail();
         if (levelOnOff) {
             drawLevels();
         }
@@ -130,6 +131,7 @@ int main() {
         if (haveLine) {
             delay++; //biến đếm thời gian +1
             window.draw(line); //vẽ đường đi
+            drawRectangleOutLinePokemonDetail();
         }
         //nếu chiến thắng hoặc thua cuộc
         if (isWin() || isEnd) {
