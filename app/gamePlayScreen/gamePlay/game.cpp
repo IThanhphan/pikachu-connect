@@ -4,6 +4,7 @@
 #include "../status/pokemonDetail.cpp"
 #include "../buttons/mixedUpBtn.cpp"
 #include "../buttons/playAgainBtn.cpp"
+#include "../buttons/returnHomeBtn.cpp"
 #include "../levels/levels.cpp"
 
 void generateRandomPokemon() {
@@ -53,7 +54,7 @@ void generateBoard() {
     }
 }
 
-void play() {
+void clickPokemon() {
     if (event.mouseButton.button == sf::Mouse::Left) {
         int x = event.mouseButton.x;
         int y = event.mouseButton.y;

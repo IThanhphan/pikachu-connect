@@ -57,6 +57,7 @@ int endSearch = 0;// biến xác định đã có được đường đi đúng
 int directionLine = 0; //hướng đi hiện tại của đường thẳng
 int preDirectionLine = 0; //hướng đi trước đó của đường thẳng
 int isEnd = 0; //biến xác định đã thắng thua hay chưa
+int isPlaying = 0;
 
 float plgPosX;
 float plgPosY;
@@ -87,7 +88,7 @@ std::vector<Direction> corners; //mảng chứa các góc khi đương đi rẽ
 
 void generateRandomPokemon(); //hàm tạo ra một ma trận pokemon một cách ngẫu nhiên
 void generateBoard(); //hàm in ra ma trận pokemon lên màn hình
-void play(); //hàm chứa sự kiện khi chơi trò chơi
+void clickPokemon(); //hàm chứa sự kiện khi chơi trò chơi
 void makeLine(int x, int y); //hàm tạo ra cấu hình đường đi đúng
 void drawLine(); //hàm vẽ ra đường đi đúng
 void determineDirection(int a, int b); //hàm xác định đường đi đang đi hướng nào
