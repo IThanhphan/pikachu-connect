@@ -2,6 +2,15 @@
 #include "app/homeScreen/menu.cpp"
 
 int main() {
+    const char* fileName = "./hightScore.txt";
+    std::fstream highScoreFile(fileName, std::ios::in);
+    std::string lineFile;
+    int lineNumber = 0;
+    while (std::getline(highScoreFile, lineFile)) {
+        lineNumber++;
+        if (lineNumber%2)  levels.push_back(lineFile);
+        else highScores.push_back(std::stoi(lineFile));
+    }
     //Khang
     push(10);
     for(int x:v) {
@@ -29,18 +38,17 @@ int main() {
             while (window.pollEvent(event)) {
                 //sự kiện nhấn vào nút x trên màn hình trò chơi
                 if (event.type == sf::Event::Closed) {
-                    runningTimer = false;
-                    isCountDown = 0;
-                    isOnMenuScreen = 0;
-                    isPlaying = 0;
-                    window.close();
+                    closeWindow();
                 }
                 //sự kiện chơi trò chơi click chuột
                 if (event.type == sf::Event::MouseButtonPressed) { 
                     play();
+                    showHighScore();
                 }
             }
             drawPlayBtn();
+            drawHighScoreBtn();
+            if (isShowHighScore) drawHighScoreBoard();
             window.display(); 
             sf::sleep(sf::seconds(0.01));
         }
@@ -60,17 +68,13 @@ int main() {
         while (isPlaying) {
             //xóa màn hình để chuẩn bị vẽ lại
             window.clear();
-            //vẽ hình nền trò chơi
+            //vẽ hình nền trò chơi 
             window.draw(backgroundSprite);
             //vòng lặp sự kiện trong trò chơi
             while (window.pollEvent(event)) {
                 //sự kiện nhấn vào nút x trên màn hình trò chơi
                 if (event.type == sf::Event::Closed) {
-                    runningTimer = false;
-                    isCountDown = 0;
-                    isOnMenuScreen = 0;
-                    isPlaying = 0;
-                    window.close();
+                    closeWindow();
                 }
                 //sự kiện chơi trò chơi click chuột
                 if (event.type == sf::Event::MouseButtonPressed) { 
@@ -165,9 +169,24 @@ int main() {
         }
         //gộp luồng hoạt động của thời gian đếm ngược vào chương trình chính
     }
+    
     if (countdown_thread.joinable()) {
         countdown_thread.join();
     }
+
+    truncate(fileName, 0);
+    highScoreFile.close();
+    std::fstream highScoreFile2(fileName, std::ios::out);
+    lineNumber = 0;
+    for (int i=1; i<=NUMBER_OF_LEVEL*2; i++) {
+        if (i%2) {
+            highScoreFile2 << levels[lineNumber] << "\n";
+        } else {
+            highScoreFile2 << std::to_string(highScores[lineNumber]) << "\n";
+            lineNumber++;
+        }
+    }
+    highScoreFile2.close();
     return 0;
 }
 

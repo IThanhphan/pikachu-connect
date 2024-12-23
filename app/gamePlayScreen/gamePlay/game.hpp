@@ -12,6 +12,8 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <fstream>
+#include <unistd.h>
 
 const float WIDTH_WINDOW = 1400; //chiều rộng cửa sổ trò chơi
 const float HEIGHT_WINDOW = 700; //chiều cao cửa sổ trò chơi
@@ -58,6 +60,7 @@ int directionLine = 0; //hướng đi hiện tại của đường thẳng
 int preDirectionLine = 0; //hướng đi trước đó của đường thẳng
 int isEnd = 0; //biến xác định đã thắng thua hay chưa
 int isPlaying = 0;
+int newHighScore = 0;
 
 float plgPosX;
 float plgPosY;
@@ -85,6 +88,8 @@ sf::Font font;
 
 std::vector<Direction> lines; //mảng chứa cấu hình đường đi
 std::vector<Direction> corners; //mảng chứa các góc khi đương đi rẽ
+std::vector<std::string> levels;
+std::vector<int> highScores;
 
 void generateRandomPokemon(); //hàm tạo ra một ma trận pokemon một cách ngẫu nhiên
 void generateBoard(); //hàm in ra ma trận pokemon lên màn hình
@@ -95,6 +100,7 @@ void determineDirection(int a, int b); //hàm xác định đường đi đang �
 void drawResultTable(std::string result); //hàm vẽ ra bảng kết quả
 void playAgainOrNext();
 void reset();
+void closeWindow();
 
 bool isWin(); //hàm xác định đã chiến thắng hay chưa
 

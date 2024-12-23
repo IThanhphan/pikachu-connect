@@ -105,28 +105,28 @@ void in(Node* root){
 }
 
 void drawScoreTable() {
-    font.loadFromFile("./src/font/arial.ttf");
-    sf::Text point("Point", font, 30);
-    sf::FloatRect pointBounds = point.getLocalBounds(); 
-    point.setFillColor(sf::Color::Black); 
-    float positionX1 = SQUARE_SIZE*(COLUMN+2) + WIDTH_POINT_TABLE/2 - pointBounds.width/2;
-    float positionY1 = pointBounds.height/2;
-    point.setPosition(positionX1, positionY1);
-    window.draw(point);
+	font.loadFromFile("./src/font/arial.ttf");
+	sf::Text scoreTitle("Score", font, 30);
+	sf::FloatRect scoreTitleBounds = scoreTitle.getLocalBounds();
+	scoreTitle.setFillColor(sf::Color::Black);
+	float positionX1 = SQUARE_SIZE * (COLUMN + 2) + WIDTH_POINT_TABLE / 2 - scoreTitleBounds.width / 2;
+	float positionY1 = scoreTitleBounds.height / 2;
+	scoreTitle.setPosition(positionX1, positionY1);
+	window.draw(scoreTitle);
 
-	sf::RectangleShape rectanglePoint(sf::Vector2f(WIDTH_POINT_TABLE, HEIGHT_POINT_TABLE)); 
-    rectanglePoint.setPosition(SQUARE_SIZE*(COLUMN+2), SQUARE_SIZE); 
-    rectanglePoint.setFillColor(scoreTableBackground); 
-    rectanglePoint.setOutlineColor(sf::Color::Black); 
-    rectanglePoint.setOutlineThickness(1.f); 
-    window.draw(rectanglePoint); 
+	sf::RectangleShape rectangleScore(sf::Vector2f(WIDTH_POINT_TABLE, HEIGHT_POINT_TABLE));
+	rectangleScore.setPosition(SQUARE_SIZE * (COLUMN + 2), SQUARE_SIZE);
+	rectangleScore.setFillColor(scoreTableBackground);
+	rectangleScore.setOutlineColor(sf::Color::Black);
+	rectangleScore.setOutlineThickness(1.f);
+	window.draw(rectangleScore);
 
 	std::string scoreText = std::to_string(score);
 	sf::Text score(scoreText, font, 30);
-    sf::FloatRect scoreBounds = point.getLocalBounds(); 
-    score.setFillColor(sf::Color::White); 
-    float positionX2 = SQUARE_SIZE*(COLUMN+2) + WIDTH_POINT_TABLE/2 - scoreBounds.width/2;
-    float positionY2 = SQUARE_SIZE + scoreBounds.height/2;
-    score.setPosition(positionX2, positionY2);
-    window.draw(score);
+	sf::FloatRect scoreBounds = scoreTitle.getLocalBounds();
+	score.setFillColor(sf::Color::White);
+	float positionX2 = SQUARE_SIZE * (COLUMN + 2) + WIDTH_POINT_TABLE / 2 - scoreBounds.width / 2;
+	float positionY2 = SQUARE_SIZE + scoreBounds.height / 2;
+	score.setPosition(positionX2, positionY2);
+	window.draw(score);
 }

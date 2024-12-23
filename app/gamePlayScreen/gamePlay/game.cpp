@@ -61,8 +61,8 @@ void clickPokemon() {
         for (int i=1; i<=ROW; i++) {
             for (int j=1; j<=COLUMN; j++) {
                 if (x>=SQUARE_SIZE*j && x<=(SQUARE_SIZE*j)+SQUARE_SIZE && 
-                    y>=SQUARE_SIZE*i && y<=(SQUARE_SIZE*i)+SQUARE_SIZE) {  
-                    if (startFlat && !endFlat) {
+                    y>=SQUARE_SIZE*i && y<=(SQUARE_SIZE*i)+SQUARE_SIZE && BOARD[i][j]) {  
+                    if (startFlat) {
                         rectangleOutLineStart.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
                         rectangleOutLineStart.setFillColor(sf::Color::Transparent);
                         rectangleOutLineStart.setOutlineColor(sf::Color::Red);
@@ -73,7 +73,7 @@ void clickPokemon() {
                         startFlat = 0;
                         endFlat = 1;
                         pokemonID = couple[0];
-                    } else if (endFlat && !startFlat) {
+                    } else if (endFlat) {
                         rectangleOutLineEnd.setPosition(SQUARE_SIZE*j, SQUARE_SIZE*i); 
                         rectangleOutLineEnd.setFillColor(sf::Color::Transparent);
                         rectangleOutLineEnd.setOutlineColor(sf::Color::Red);
@@ -194,10 +194,24 @@ bool isWin() {
     runningTimer = false;
     isEnd = 1;
     levelPassed[levelSelected] = 1;
+    if (score + (int)second > highScores[levelSelected-1]) newHighScore = 1;
+    highScores[levelSelected-1] = newHighScore ? score + (int)second : highScores[levelSelected-1];
     return true;
 }
 
 void drawResultTable(std::string result) {
+    if (newHighScore) {
+        font.loadFromFile("./src/font/arial.ttf");
+        sf::Text newHighScoreText("New High Score!!!", font, 70);
+        sf::FloatRect newHighScoreTextBounds = newHighScoreText.getLocalBounds();
+        newHighScoreText.setFillColor(sf::Color::Yellow);
+        newHighScoreText.setStyle(sf::Text::Bold);
+        float positionX = WIDTH_WINDOW/2 - newHighScoreTextBounds.width/2;
+        float positionY = SQUARE_SIZE;
+        newHighScoreText.setPosition(positionX, positionY);
+        window.draw(newHighScoreText);
+    }
+
     sf::RectangleShape resultTable(sf::Vector2f(WIDTH_RESULT_TABLE, HEIGHT_RESULT_TABLE));
     resultTable.setPosition(WIDTH_WINDOW/2 - WIDTH_RESULT_TABLE/2, HEIGHT_WINDOW/2 - HEIGHT_RESULT_TABLE/2); 
     resultTable.setFillColor(sf::Color::White);
@@ -242,6 +256,7 @@ void reset() {
         }
     }
     generateRandomPokemon();
+    newHighScore = 0;
     isEnd = 0;
     score = 0;
     pokemonID = 0;
@@ -262,4 +277,12 @@ void playAgainOrNext() {
             }
         }
     } 
+}
+
+void closeWindow() {
+    runningTimer = false;
+    isCountDown = 0;
+    isOnMenuScreen = 0;
+    isPlaying = 0;
+    window.close();
 }

@@ -13,6 +13,18 @@ void drawBarsIcon() {
 }
 
 void drawLevels() {
+    window.draw(blackOverlay);
+
+    sf::Texture closeTexture;
+    closeTexture.loadFromFile("./src/image/icons/close.png");
+    sf::Sprite closeSprite;
+    closeSprite.setTexture(closeTexture);
+    closeSprite.setPosition(0, 0);
+    sf::Vector2u originalSize = closeTexture.getSize();
+    float scaleFactor = SQUARE_SIZE / originalSize.x;
+    closeSprite.setScale(scaleFactor, scaleFactor);
+    window.draw(closeSprite);
+
     for (int i=1; i<=NUMBER_OF_LEVEL; i++) {
         sf::RectangleShape rectangleLevel(sf::Vector2f(SIZE_LEVEL_REC, SIZE_LEVEL_REC));
         float positionX1 = (i-1)*(WIDTH_WINDOW/NUMBER_OF_LEVEL) + (WIDTH_WINDOW/NUMBER_OF_LEVEL - SIZE_LEVEL_REC)/2;
@@ -57,8 +69,10 @@ void selectLevelBtn() {
             y>=0 && y<=SQUARE_SIZE) {
             if (!levelOnOff) {
                 levelOnOff = 1;
+                blackOverlay.setFillColor(sf::Color(0, 0, 0, 128));
             } else {
                 levelOnOff = 0;
+                blackOverlay.setFillColor(sf::Color(0, 0, 0, 0));
             }
         }
     } 
@@ -73,9 +87,9 @@ void selectLevel() {
                 x<=i*(WIDTH_WINDOW/NUMBER_OF_LEVEL)+(WIDTH_WINDOW/NUMBER_OF_LEVEL-SIZE_LEVEL_REC)/2+SIZE_LEVEL_REC
                 && y>=HEIGHT_WINDOW/2 - SIZE_LEVEL_REC/2 &&
                 y<=HEIGHT_WINDOW/2 + SIZE_LEVEL_REC/2 && levelPassed[i]) {
-                    reset();
-                    levelSelected = i+1;
-                    levelOnOff = 0;
+                reset();
+                levelSelected = i+1;
+                levelOnOff = 0;
             }
         }
     }

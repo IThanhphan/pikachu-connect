@@ -12,6 +12,8 @@ void mixedUp() {
         {
             second-=5;
             score-=5;
+            couple[0] = couple[1] = endFlat = 0;
+            startFlat = 1;
             for (int i=1; i<=NUMBER_OF_POKEMON*2; i++) {
                 for (int j=0; j<=1; j++) {
                     std::random_device rd;
