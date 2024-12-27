@@ -200,6 +200,8 @@ bool isWin() {
 }
 
 void drawResultTable(std::string result) {
+    window.draw(blackOverlay);
+
     if (newHighScore) {
         font.loadFromFile("./src/font/arial.ttf");
         sf::Text newHighScoreText("New High Score!!!", font, 70);
@@ -256,6 +258,7 @@ void reset() {
         }
     }
     generateRandomPokemon();
+    blackOverlay.setFillColor(sf::Color(0, 0, 0, 0));
     newHighScore = 0;
     isEnd = 0;
     score = 0;

@@ -1,5 +1,6 @@
 #include "timer.hpp"
 #include "point.hpp"
+#include "../levels/levels.hpp"
 
 void countdown(int seconds) {
     while (isCountDown) {
@@ -20,10 +21,11 @@ void countdown(int seconds) {
             Node *root = build(0, v.size() - 1);
             Node *result = search(root, score);
             if (result != NULL) {
-                std::cout << "Found: " << result->data << std::endl;
                 resultText = "You Found!!!";
+                levelPassed[levelSelected] = 1;
+                if (score + (int)second > highScores[levelSelected-1]) newHighScore = 1;
+                highScores[levelSelected-1] = newHighScore ? score + (int)second : highScores[levelSelected-1];
             } else {
-                std::cout << "Not Found: " << score << std::endl;
                 resultText = "You Lose!!!"; //in ra màn hình You Lose!!! 
             }
             timeStr = "Time's up!"; //in ra màn hình Time's up!

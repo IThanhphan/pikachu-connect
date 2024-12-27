@@ -13,7 +13,6 @@ int levelPassed[NUMBER_OF_LEVEL] = {1, 0, 0, 0, 0};
 
 sf::Color notPassColor(192, 192, 192);
 
-sf::RectangleShape blackOverlay(sf::Vector2f(WIDTH_WINDOW, HEIGHT_WINDOW));
 
 void drawBarsIcon();
 void drawLevels();

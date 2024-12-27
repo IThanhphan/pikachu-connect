@@ -85,6 +85,7 @@ sf::Texture backgroundTexture;  //kết cấu hình nền trò chơi
 sf::Sprite backgroundSprite;
 sf::Event event; //đối tượng chứa các sự kiện trong quá trình chơi
 sf::Font font;
+sf::RectangleShape blackOverlay(sf::Vector2f(WIDTH_WINDOW, HEIGHT_WINDOW));
 
 std::vector<Direction> lines; //mảng chứa cấu hình đường đi
 std::vector<Direction> corners; //mảng chứa các góc khi đương đi rẽ

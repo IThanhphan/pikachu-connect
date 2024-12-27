@@ -163,7 +163,10 @@ int main() {
                 drawRectangleOutLinePokemonDetail();
             }
             //nếu chiến thắng hoặc thua cuộc
-            if (isWin() || isEnd) drawResultTable(resultText); //vẽ ra màn hình bảng kết quả thông qua biến toàn cục resultText     
+            if (isWin() || isEnd) {
+                blackOverlay.setFillColor(sf::Color(0, 0, 0, 128));
+                drawResultTable(resultText); //vẽ ra màn hình bảng kết quả thông qua biến toàn cục resultText 
+            }    
             window.display(); //hiển thị màn hình trò chơi
             sf::sleep(sf::seconds(0.01)); //ngừng chương trình 0.01 giây trước khi vẽ lại màn hình làm giảm tốc độ xuất màn hình để tối ưu hiệu năng
         }

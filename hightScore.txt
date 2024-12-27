@@ -1,10 +1,10 @@
 Level 1:
-124
+0
 Level 2:
-129
+0
 Level 3:
-63
+0
 Level 4:
-45
+0
 Level 5:
-56
+0

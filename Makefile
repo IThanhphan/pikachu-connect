@@ -5,7 +5,7 @@
 
 CXX = g++
 CXXFLAGS = -c -I"src\include" -DSFML_STATIC
-LDFLAGS = -L"src\lib" -lsfml-graphics -lsfml-window -lsfml-system -lopenal32 -lfreetype -lwinmm -lgdi32
+LDFLAGS = -L"src\lib" -lsfml-graphics -lsfml-window -lsfml-system -lopenal32 -lopengl32 -lws2_32 -lfreetype -lwinmm -lgdi32 -static
 
 # Tệp thực thi
 TARGET = main
