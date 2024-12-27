@@ -11,16 +11,8 @@ int main() {
         if (lineNumber%2)  levels.push_back(lineFile);
         else highScores.push_back(std::stoi(lineFile));
     }
-    //Khang
     push(10);
-    for(int x:v) {
-        std::cout << x << ' ';
-    }std::cout << std::endl;
     heapSort();
-    for(int x:v) {
-        std::cout << x << ' ';
-    }std::cout << std::endl;
-    //
     // Tạo một luồng để chạy đồng hồ đếm ngược
     std::thread countdown_thread(countdown, second);
     while (window.isOpen()) {
@@ -104,7 +96,6 @@ int main() {
                     makeLine(start.x, start.y); //tạo cấu hình đường đi từ vị trí bắt đầu
                     //nếu tìm thấy đường đi đúng
                     if (endSearch) {
-                        //khang
                         score++;
                         drawLine(); //vẽ đường đi đúng
                         BOARD[start.y][start.x] = 0; //đặt lại tại vi trí bắt đầu là rỗng (=0)
