@@ -155,6 +155,18 @@ int main() {
             }
             //nếu chiến thắng hoặc thua cuộc
             if (isWin() || isEnd) {
+                if (!isWin()) {
+                    Node *root = build(0, v.size() - 1);
+                    Node *result = search(root, score);
+                    if (result != NULL) {
+                        resultText = "You Found!!!";
+                        levelPassed[levelSelected] = 1;
+                        if (score > highScores[levelSelected - 1]) newHighScore = 1;
+                        highScores[levelSelected - 1] = newHighScore ? score : highScores[levelSelected - 1];
+                    } else {
+                        resultText = "You Lose!!!"; // in ra màn hình You Lose!!!
+                    }
+                }
                 blackOverlay.setFillColor(sf::Color(0, 0, 0, 128));
                 drawResultTable(resultText); //vẽ ra màn hình bảng kết quả thông qua biến toàn cục resultText 
             }    

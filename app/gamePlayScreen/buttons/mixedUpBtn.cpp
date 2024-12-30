@@ -8,9 +8,9 @@ void mixedUp() {
         if (x>=(SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2) &&
             x<=(SQUARE_SIZE*(COLUMN+2))/2+(WIDTH_MIXED_UP_BTN/2) &&
             y>=SQUARE_SIZE*(ROW+2) &&
-            y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN && second > 5) 
+            y<=SQUARE_SIZE*(ROW+2)+HEIGHT_MIXED_UP_BTN && second > 10) 
         {
-            second-=5;
+            second-=10;
             score-=5;
             couple[0] = couple[1] = endFlat = 0;
             startFlat = 1;

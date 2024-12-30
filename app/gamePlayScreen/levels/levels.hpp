@@ -13,7 +13,6 @@ int levelPassed[NUMBER_OF_LEVEL] = {1, 0, 0, 0, 0};
 
 sf::Color notPassColor(192, 192, 192);
 
-
 void drawBarsIcon();
 void drawLevels();
 void drawCurrentLevel();

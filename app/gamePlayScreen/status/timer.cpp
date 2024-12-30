@@ -1,6 +1,5 @@
 #include "timer.hpp"
 #include "point.hpp"
-#include "../levels/levels.hpp"
 
 void countdown(int seconds) {
     while (isCountDown) {
@@ -18,16 +17,6 @@ void countdown(int seconds) {
             second--; //biến toàn cục để cập nhật lại thời gian in ra màn hình
         }
         if (runningTimer && !isEnd) {
-            Node *root = build(0, v.size() - 1);
-            Node *result = search(root, score);
-            if (result != NULL) {
-                resultText = "You Found!!!";
-                levelPassed[levelSelected] = 1;
-                if (score + (int)second > highScores[levelSelected-1]) newHighScore = 1;
-                highScores[levelSelected-1] = newHighScore ? score + (int)second : highScores[levelSelected-1];
-            } else {
-                resultText = "You Lose!!!"; //in ra màn hình You Lose!!! 
-            }
             timeStr = "Time's up!"; //in ra màn hình Time's up!
         }      
         isEnd=1;
