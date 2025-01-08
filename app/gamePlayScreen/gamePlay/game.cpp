@@ -56,8 +56,9 @@ void generateBoard() {
 
 void clickPokemon() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         for (int i=1; i<=ROW; i++) {
             for (int j=1; j<=COLUMN; j++) {
                 if (x>=SQUARE_SIZE*j && x<=(SQUARE_SIZE*j)+SQUARE_SIZE && 
@@ -270,8 +271,9 @@ void reset() {
 
 void playAgainOrNext() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=plgPosX && x<=plgPosX+widthPlg &&
             y>=plgPosY && y<=plgPosY+heightPlg) {
             reset();

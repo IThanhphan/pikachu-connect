@@ -14,8 +14,9 @@ void drawHomeIcon() {
 
 void returnHome() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=WIDTH_WINDOW-SQUARE_SIZE && x<=WIDTH_WINDOW &&
             y>=0 && y<=SQUARE_SIZE) {
                 isPlaying = 0;

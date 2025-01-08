@@ -63,8 +63,9 @@ void drawCurrentLevel() {
 
 void selectLevelBtn() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=0 && x<=SQUARE_SIZE &&
             y>=0 && y<=SQUARE_SIZE) {
             if (!levelOnOff) {
@@ -80,8 +81,9 @@ void selectLevelBtn() {
 
 void selectLevel() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         for (int i=0; i<NUMBER_OF_LEVEL; i++) {
             if (x>=i*(WIDTH_WINDOW/NUMBER_OF_LEVEL)+(WIDTH_WINDOW/NUMBER_OF_LEVEL-SIZE_LEVEL_REC)/2 &&
                 x<=i*(WIDTH_WINDOW/NUMBER_OF_LEVEL)+(WIDTH_WINDOW/NUMBER_OF_LEVEL-SIZE_LEVEL_REC)/2+SIZE_LEVEL_REC

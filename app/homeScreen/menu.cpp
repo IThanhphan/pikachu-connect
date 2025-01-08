@@ -68,8 +68,9 @@ void drawHighScoreBoard() {
 
 void play() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=SQUARE_SIZE && x<=SQUARE_SIZE+WIDTH_PLAY_BTN &&
             y>=SQUARE_SIZE*ROW && y<=SQUARE_SIZE*ROW+HEIGHT_PLAY_BTN) {
             reset();
@@ -81,8 +82,9 @@ void play() {
 
 void showHighScore() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (isShowHighScore==1 && ((x<positionXBoard || x>positionXBoard+WIDTH_HIGH_SCORE_BOARD) ||
             (y<positionYBoard || y>positionYBoard+HEIGHT_HIGH_SCORE_BOARD))) {
             isShowHighScore = 0;

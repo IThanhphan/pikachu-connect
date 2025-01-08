@@ -20,8 +20,9 @@ void drawPlayAgainBtn() {
 
 void playAgain() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=positionX1 && x<=positionX1+WIDTH_PLAY_AGAIN_BTN &&
             y>=positionY1 && y<=positionY1+HEIGHT_PLAY_AGAIN_BTN) {
             reset();

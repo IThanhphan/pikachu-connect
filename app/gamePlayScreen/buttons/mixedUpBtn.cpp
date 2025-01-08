@@ -3,8 +3,9 @@
 
 void mixedUp() {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        int x = event.mouseButton.x;
-        int y = event.mouseButton.y;
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+        int x = worldPos.x;
+        int y = worldPos.y;
         if (x>=(SQUARE_SIZE*(COLUMN+2))/2-(WIDTH_MIXED_UP_BTN/2) &&
             x<=(SQUARE_SIZE*(COLUMN+2))/2+(WIDTH_MIXED_UP_BTN/2) &&
             y>=SQUARE_SIZE*(ROW+2) &&
